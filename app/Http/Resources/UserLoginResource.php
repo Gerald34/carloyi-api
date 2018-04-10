@@ -52,6 +52,7 @@ class UserLoginResource extends Resource
             'successCode' => 201,
             'userData' => $userInfoSystemData,
             'successMessage' => 'Successful login',
+            'offers' => null,
             'lastVisitDate' => $lastVisitTime
         ];
 
