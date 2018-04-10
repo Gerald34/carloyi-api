@@ -30,11 +30,11 @@ class UserLoginResource extends Resource
 
   public static function findUser($userInput) {
 
-    self::$sysData = CarnetUsers::where('email',$userInput['email'])->first();
+    self::$systemData = CarnetUsers::where('email',$userInput['email'])->first();
     $userInfoJson = response()->json(self::$systemData);
     $userInfoSystemData = $userInfoJson->original;
 
-    if(isset(self::$sysData)) {
+    if(isset(self::$systemData)) {
       self::$response = self::checkPassword($userInfoSystemData ,$userInput);
     } else {
       self::$response = 'User not found';
