@@ -17,6 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// ASync Submission Requests
 Route::get('/affordability', 'AffordabilityController@getAffodability');
 Route::get('/signin', 'UserLoginController@userSignIn');
 Route::post('/signup', 'UserRegistrationController@userRegistration');
+
+//Async Validation Requests
+Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
+

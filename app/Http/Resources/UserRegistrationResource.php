@@ -16,7 +16,6 @@ use Monolog\Handler\RotatingFileHandler;
 class UserRegistrationResource extends Resource
 {
     private static $response; // all return json responses
-    private static $systemData; // all users data
     public $log; // system logger
 
     public function __construct() {
@@ -26,8 +25,8 @@ class UserRegistrationResource extends Resource
         $this->log->pushHandler(new FirePHPHandler());
     }
 
-    public static function checkIfUserExists($newUserData) {
-        $checkUsers = UserRegistrationModel::where('email', $newUserData['email'])->first();
+    public static function checkIfUserExists($newUserEmail) {
+        $checkUsers = UserRegistrationModel::where('email', $newUserEmail['email'])->first();
 
         if(isset($checkUsers)) {
             self::$response = [
@@ -43,4 +42,38 @@ class UserRegistrationResource extends Resource
 
         return self::$response;
     }
+
+    public static function newUserRegistration($newUserData) {
+        $registrationDate = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now());
+        $checkEmail = self::checkIfUserExists($newUserData);
+        if(isset($checkEmail['errorCode'])):
+            self::$response = [
+                'errorCode' => 401,
+                'errorMessage' => 'user exists'
+            ];
+            else:
+                $newCustomer = UserRegistrationModel::create([
+                    'name' => $newUserData['name'],
+                    'username' => $newUserData['username'],
+                    'email' => $newUserData['email'],
+                    'password' => hash::make($newUserData['password']),
+                    'lastName' => $newUserData['lastname'],
+                    'registerDate' => $registrationDate,
+                    'lastvisitDate' => $registrationDate,
+                    'lastResetTime' => $registrationDate
+                ]);
+
+                // Save new customer
+                $newCustomer->save();
+
+                self::$response = [
+                    'successCode' => 209,
+                    'successMessage' => 'user registered'
+                ];
+                endif;
+
+        return self::$response;
+    }
+
+
 }

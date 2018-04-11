@@ -18,16 +18,12 @@ class UserRegistrationModel extends Model
         'name',
         'lastName',
         'email',
-        'contactNumber',
-        'faxNumber',
-        'birth_date',
-        'physicalAddress',
-        'street_number',
-        'street_name',
-        'suburb',
-        'city',
-        'province',
-        'country',
-        'lastvisitDate'
+        'lastvisitDate',
+        'registerDate',
+        'lastResetTime',
+        'faxNumber' => '',
+        'physicalAddress' => '',
+        'postalAddress' => '',
+        'params' => ''
     );
 }
