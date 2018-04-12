@@ -5,7 +5,10 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 
-
+/**
+ * Class UserRegistrationModel
+ * @package App
+ */
 class UserRegistrationModel extends Model
 {
     //

@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 // Resources
 use App\Http\Resources\UserRegistrationResource;
 
+/**
+ * Class UserRegistrationController
+ * @package App\Http\Controllers
+ */
 class UserRegistrationController extends Controller
 {
+    /**
+     * @var
+     */
     private $response;
 
+    /**
+     * UserRegistrationController constructor.
+     */
     public function __construct() {
 
     }
 
-    public function checkUserEmail(Request $request) {
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function checkUserEmail(Request $request)
+    {
         $newUserEmail = [
             'email' => strtolower(strip_tags(trim($request->input('email'))))
         ];
@@ -23,7 +39,12 @@ class UserRegistrationController extends Controller
         return $this->response;
     }
 
-    public function userRegistration(Request $request) {
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function userRegistration(Request $request)
+    {
         $newUserData = [
             'username' => strtolower(strip_tags(trim($request->input('username')))),
             'email' => strtolower(strip_tags(trim($request->input('email')))),
