@@ -23,6 +23,15 @@ Route::get('/affordability', 'AffordabilityController@getAffodability');
 Route::get('/signin', 'UserLoginController@userSignIn');
 Route::post('/signup', 'UserRegistrationController@userRegistration');
 
+Route::get('/brands', function(){
+
+    return App\Brand::getBrandOptions();
+});
+Route::get('/brands/{id}', function($id){
+
+    return App\Brand::getBrand($id);
+});
+
 //Async Validation Requests
 Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
 
