@@ -24,9 +24,7 @@ class AffordabilityController extends Controller
     }
 
     private function affordabiltyCalculator($income, $expenses) {
-
         $this->response = FinanceResource::financeCalculator($income, $expenses);
-
         return $this->response;
     }
 }

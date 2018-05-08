@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,19 +19,30 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Token
+Route::get('/token', function()
+{
+    return csrf_token();
+});
+
 // ASync Submission Requests
 Route::get('/affordability', 'AffordabilityController@getAffodability');
 Route::get('/signin', 'UserLoginController@userSignIn');
 Route::post('/signup', 'UserRegistrationController@userRegistration');
 
 Route::get('/brands', function(){
-
     return App\Brand::getBrandOptions();
 });
 Route::get('/brands/{id}', function($id){
-
     return App\Brand::getBrand($id);
 });
+
+Route::group(['prefix' => '/carsearch' ], function()
+{
+    Route::get('/specific/{id}', 'CarSearchController@specific');
+    Route::get('/affordability', 'CarSearchController@affordability');
+});
+
 
 //Async Validation Requests
 Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
