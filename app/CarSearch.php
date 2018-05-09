@@ -113,6 +113,10 @@ class CarSearch extends Model{
                     $join->on('a.id', '=', 'k.sid')
                          ->where('k.fid', '=', 11);
                     })
+                    ->leftjoin('vfq0g_sobipro_field_data AS l', function ($join) {
+                    $join->on('a.id', '=', 'l.sid')
+                         ->where('l.fid', '=', 8);
+                    })
                     
                     
                 
@@ -130,11 +134,12 @@ class CarSearch extends Model{
                      'i.baseData AS acceleration',
                      'j.baseData AS consumption',
                      'k.baseData AS fuel_efficiency',
+                     'l.baseData AS score_offroad',
                  ])
                  ->get();
                     
                 //return $cars->toSql();
          
-         return ['code' => 1, 'error' => '', 'model' => $model, 'data' => $cars ];
+         return ['code' => 1, 'error' => '', 'type' => 1,  'model' => $model, 'data' => $cars ];
     }
 }
