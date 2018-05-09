@@ -117,6 +117,10 @@ class CarSearch extends Model{
                     $join->on('a.id', '=', 'l.sid')
                          ->where('l.fid', '=', 8);
                     })
+                    ->leftjoin('vfq0g_sobipro_field_data AS m', function ($join) {
+                    $join->on('a.id', '=', 'm.sid')
+                         ->where('m.fid', '=', 19);
+                    })
                     
                     
                 
@@ -135,6 +139,7 @@ class CarSearch extends Model{
                      'j.baseData AS consumption',
                      'k.baseData AS fuel_efficiency',
                      'l.baseData AS score_offroad',
+                     'l.baseData AS  description',
                  ])
                  ->get();
                     

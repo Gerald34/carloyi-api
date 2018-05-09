@@ -30,6 +30,12 @@ Route::get('/affordability', 'AffordabilityController@getAffodability');
 Route::get('/signin', 'UserLoginController@userSignIn');
 Route::post('/signup', 'UserRegistrationController@userRegistration');
 
+Route::group(['prefix' => '/accounts' ], function()
+{
+    Route::post('/register', 'AccountsController@register');   
+});
+
+
 Route::get('/brands', function(){
     return App\Brand::getBrandOptions();
 });
