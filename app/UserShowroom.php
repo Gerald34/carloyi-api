@@ -96,7 +96,7 @@ class UserShowroom extends Model
          
          $body = "";
          
-         $to = "sibu@coppertable";
+         $to = "sibu@coppertable.co.za,gerald@coppertable.co.za";
          $subject = "Carnet Quote requests";
 
         $message = "
