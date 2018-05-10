@@ -26,7 +26,7 @@ class CarSearchController extends Controller {
     
     public function affordability(Request $request)
     {
-        return "hello affodability";
+        return "affodability";
     }
     
 }

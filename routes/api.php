@@ -35,6 +35,13 @@ Route::group(['prefix' => '/accounts' ], function()
     Route::post('/register', 'AccountsController@register');   
 });
 
+Route::group(['prefix' => '/showroom' ], function()
+{
+    Route::get('/cars/{id}', 'ShowroomController@getUserShowroom');
+    Route::post('/add', 'ShowroomController@addNew');
+    Route::post('/placerequest', 'ShowroomController@placeRequest');
+});
+
 
 Route::get('/brands', function(){
     return App\Brand::getBrandOptions();

@@ -29,4 +29,6 @@ class UserRegistrationModel extends Model
         'postalAddress' => '',
         'params' => ''
     );
+    
+    
 }

@@ -67,84 +67,108 @@ class CarSearch extends Model{
             
         }
         
-         $cars = DB::table('vfq0g_sobipro_object AS a')
-                 ->join('vfq0g_sobipro_field_data AS b', function ($join) {
-                    $join->on('a.id', '=', 'b.sid')
-                         ->where('b.fid', '=', 3);
-                    })
-                 ->join('vfq0g_sobipro_field_data AS c', function ($join) {
-                    $join->on('a.id', '=', 'c.sid')
-                         ->where('c.fid', '=', 4);
-                    })
-                 ->leftjoin('vfq0g_sobipro_field_data AS d', function ($join) {
-                    $join->on('a.id', '=', 'd.sid')
-                         ->where('d.fid', '=', 17);
-                    })
-                    
-                     ->leftjoin('vfq0g_sobipro_field_data AS e', function ($join) {
-                    $join->on('a.id', '=', 'e.sid')
-                         ->where('e.fid', '=', 18);
-                    })
-                    
-                     ->leftjoin('vfq0g_sobipro_field_data AS f', function ($join) {
-                    $join->on('a.id', '=', 'f.sid')
-                         ->where('f.fid', '=', 20);
-                    })
-                    
-                     ->leftjoin('vfq0g_sobipro_field_data AS g', function ($join) {
-                    $join->on('a.id', '=', 'g.sid')
-                         ->where('g.fid', '=', 21);
-                    })
-                     ->leftjoin('vfq0g_sobipro_field_data AS h', function ($join) {
-                    $join->on('a.id', '=', 'h.sid')
-                         ->where('h.fid', '=', 22);
-                    })
-                    
-                     ->leftjoin('vfq0g_sobipro_field_data AS i', function ($join) {
-                    $join->on('a.id', '=', 'i.sid')
-                         ->where('i.fid', '=', 23);
-                    })
-                    
-                    ->leftjoin('vfq0g_sobipro_field_data AS j', function ($join) {
-                    $join->on('a.id', '=', 'j.sid')
-                         ->where('j.fid', '=', 24);
-                    })
-                    ->leftjoin('vfq0g_sobipro_field_data AS k', function ($join) {
-                    $join->on('a.id', '=', 'k.sid')
-                         ->where('k.fid', '=', 11);
-                    })
-                    ->leftjoin('vfq0g_sobipro_field_data AS l', function ($join) {
-                    $join->on('a.id', '=', 'l.sid')
-                         ->where('l.fid', '=', 8);
-                    })
-                    ->leftjoin('vfq0g_sobipro_field_data AS m', function ($join) {
-                    $join->on('a.id', '=', 'm.sid')
-                         ->where('m.fid', '=', 19);
-                    })
-                    
-                    
-                
-                 ->whereIn('a.id', $id_option)
-                 ->select([
-                     'a.id',
-                     'a.name',
-                     'b.baseData AS price',
-                     'c.baseData AS type',
-                     'd.baseData AS image',
-                     'e.baseData AS score',
-                     'f.baseData AS engine',
-                     'g.baseData AS power',
-                     'h.baseData AS torque',
-                     'i.baseData AS acceleration',
-                     'j.baseData AS consumption',
-                     'k.baseData AS fuel_efficiency',
-                     'l.baseData AS score_offroad',
-                     'l.baseData AS  description',
-                 ])
-                 ->get();
+        $cars = self::_getSearchCarsByIds($id_option);
+         
                     
                 //return $cars->toSql();
          
          return ['code' => 1, 'error' => '', 'type' => 1,  'model' => $model, 'data' => $cars ];
+    }
+    
+    public static function getSearchCarsByIds($ids, $options =array())
+    {
+        return self::_getSearchCarsByIds($ids);
+    }
+
+
+    /*
+     * @param $ids array of car ids
+     * 
+     * 
+     * 
+     */
+    private static function _getSearchCarsByIds($ids, $options = array())
+    {
+        $query = DB::table('vfq0g_sobipro_object AS a')
+        ->join('vfq0g_sobipro_field_data AS b', function ($join) {
+           $join->on('a.id', '=', 'b.sid')
+                ->where('b.fid', '=', 3);
+           })
+        ->join('vfq0g_sobipro_field_data AS c', function ($join) {
+           $join->on('a.id', '=', 'c.sid')
+                ->where('c.fid', '=', 4);
+           })
+        ->leftjoin('vfq0g_sobipro_field_data AS d', function ($join) {
+           $join->on('a.id', '=', 'd.sid')
+                ->where('d.fid', '=', 17);
+           })
+
+            ->leftjoin('vfq0g_sobipro_field_data AS e', function ($join) {
+           $join->on('a.id', '=', 'e.sid')
+                ->where('e.fid', '=', 18);
+           })
+
+            ->leftjoin('vfq0g_sobipro_field_data AS f', function ($join) {
+           $join->on('a.id', '=', 'f.sid')
+                ->where('f.fid', '=', 20);
+           })
+
+            ->leftjoin('vfq0g_sobipro_field_data AS g', function ($join) {
+           $join->on('a.id', '=', 'g.sid')
+                ->where('g.fid', '=', 21);
+           })
+            ->leftjoin('vfq0g_sobipro_field_data AS h', function ($join) {
+           $join->on('a.id', '=', 'h.sid')
+                ->where('h.fid', '=', 22);
+           })
+
+            ->leftjoin('vfq0g_sobipro_field_data AS i', function ($join) {
+           $join->on('a.id', '=', 'i.sid')
+                ->where('i.fid', '=', 23);
+           })
+
+           ->leftjoin('vfq0g_sobipro_field_data AS j', function ($join) {
+           $join->on('a.id', '=', 'j.sid')
+                ->where('j.fid', '=', 24);
+           })
+           ->leftjoin('vfq0g_sobipro_field_data AS k', function ($join) {
+           $join->on('a.id', '=', 'k.sid')
+                ->where('k.fid', '=', 11);
+           })
+           ->leftjoin('vfq0g_sobipro_field_data AS l', function ($join) {
+           $join->on('a.id', '=', 'l.sid')
+                ->where('l.fid', '=', 8);
+           })
+           ->leftjoin('vfq0g_sobipro_field_data AS m', function ($join) {
+           $join->on('a.id', '=', 'm.sid')
+                ->where('m.fid', '=', 19);
+           }); 
+           
+          // options
+          
+           
+           
+        $query->whereIn('a.id', $ids)
+        ->select([
+            'a.id',
+            'a.name',
+            'b.baseData AS price',
+            'c.baseData AS type',
+            'd.baseData AS image',
+            'e.baseData AS score',
+            'f.baseData AS engine',
+            'g.baseData AS power',
+            'h.baseData AS torque',
+            'i.baseData AS acceleration',
+            'j.baseData AS consumption',
+            'k.baseData AS fuel_efficiency',
+            'l.baseData AS score_offroad',
+            'm.baseData AS  description',
+        ]);
+       
+        
+        $cars = $query->get();
+       return $cars;
+        
     }
 }

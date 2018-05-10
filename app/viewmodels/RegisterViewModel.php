@@ -33,9 +33,6 @@ class RegisterViewModel extends Model
         {
             return ['code' => -1, 'error' =>'user exists', 'data' => [] ]; 
         }
-        
-        
-        
         $this->password = md5($this->password);
         //$this->lastresetTime =  '0000-00-00 00:00:00';
         
@@ -58,13 +55,12 @@ class RegisterViewModel extends Model
     {
         //$user = RegisterViewModel::where('email', $this->email)->first()->toSql();
         $user = self::where(['email' => $this->email])->first();
-        
-        
         return ($user == null)? FALSE : TRUE;
-            
     }
     
-    private function getNewUserValues()
+  
+
+        private function getNewUserValues()
     {
         return
         [
