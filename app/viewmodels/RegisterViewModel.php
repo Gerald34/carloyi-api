@@ -28,6 +28,7 @@ class RegisterViewModel extends Model
     public function register() {
         
        
+       
         
         if($this->userExists())
         {
@@ -68,7 +69,8 @@ class RegisterViewModel extends Model
             'email' => $this->email,            
             'password' => $this->password,
             'username' => $this->email,
-            'lastName' => $this->lastName
+            'lastName' => $this->lastName,
+            'api_token' => str_random(60)
         ];
     }
     

@@ -40,12 +40,27 @@ Route::group(['prefix' => '/showroom' ], function()
     Route::get('/cars/{id}', 'ShowroomController@getUserShowroom');
     Route::post('/add', 'ShowroomController@addNew');
     Route::post('/placerequest', 'ShowroomController@placeRequest');
+    
 });
 
+
+Route::group(['prefix' => '/portal' ], function()
+{
+    Route::get('/{id}', 'DealerPortalController@getDealerShowroom');
+    Route::post('/add', 'DealerPortalController@addNew');
+    Route::post('/placerequest', 'DealerPortalController@placeRequest');
+     Route::post('/login', 'DealerPortalController@login');
+});
 
 Route::get('/brands', function(){
     return App\Brand::getBrandOptions();
 });
+
+Route::get('/ttest', function(){
+    return App\User::getActiveDealers();
+});
+
+
 Route::get('/brands/{id}', function($id){
     return App\Brand::getBrand($id);
 });
@@ -55,8 +70,6 @@ Route::group(['prefix' => '/carsearch' ], function()
     Route::get('/specific/{id}', 'CarSearchController@specific');
     Route::get('/affordability', 'CarSearchController@affordability');
 });
-
-
 //Async Validation Requests
 Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
 

@@ -27,8 +27,7 @@ class ShowroomController extends Controller
         
         if($data['exists'])
         {
-             $model_data = $data['entry'];
-            $model->sendRequest();
+            $model_data = $data['entry'];
             if($model_data->requested == 1)
             {
                 
@@ -40,7 +39,9 @@ class ShowroomController extends Controller
                 ];                
             }
             
-           
+            $added_post_results = \App\DealerShowroomPosts::addPost($model->cid, $model->uid);
+            
+            $model->sendRequest();
             $model_data->requested = 1;
             $model_data->request_date = date("Y-m-d H:i:s");
             $model_data->save();
