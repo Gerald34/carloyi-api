@@ -47,9 +47,10 @@ Route::group(['prefix' => '/showroom' ], function()
 Route::group(['prefix' => '/portal' ], function()
 {
     Route::get('/{id}', 'DealerPortalController@getDealerShowroom');
-    Route::post('/add', 'DealerPortalController@addNew');
-    Route::post('/placerequest', 'DealerPortalController@placeRequest');
-     Route::post('/login', 'DealerPortalController@login');
+    Route::post('/reply', 'DealerPortalController@reply');
+    Route::post('/placeoffer', 'DealerPortalController@placeOffer');
+    Route::post('/login', 'DealerPortalController@login');
+    Route::get('/view/{id}', 'DealerPortalController@view');
 });
 
 Route::get('/brands', function(){

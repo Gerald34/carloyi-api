@@ -9,6 +9,8 @@ class DealerShowroomPosts extends Model
     //
     protected $table  ='vfq0g_dealer_showroom';
     
+    protected $fillable = ['parent_id','request_id','dealer_id','offer','comment'];
+    
     
     public function getDealerShowroomEntries($id)
     {
@@ -41,6 +43,35 @@ class DealerShowroomPosts extends Model
         
     }
     
+    public function getFullShowroomPost($id)
+    {
+            $post = self::find($id);
+            if($post == null)
+            {
+                return [
+                    'code' => -1,
+                    'error' =>'No post found',
+                ];
+            }
+            $entries[] = [
+                'entry' => $post,
+                'user' => BaseUser::getUderById($post->user_id),
+                'car' => CarSearch::getSearchCarsByIds([$post->car_id]),
+                'posts' =>  DealerUserPost::getPostsByRequestID($post->id)
+            ];
+           
+            return
+            [
+                'code' => 1,
+                'data' => $entries
+            ];
+    }
+    
+    public static function getPost($id)
+    {
+        return self::find($id);
+    }
+
     public static function addPost($car_id, $user_id)
     {
         

@@ -37,9 +37,6 @@ class LoginViewModel extends Model
             'user' => $entry,
             'roles' => $roles 
         ];
-                
-        
-        
         
         return $data;
     }
