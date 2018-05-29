@@ -142,23 +142,7 @@ class CarSearch extends Model{
            ->leftjoin('vfq0g_sobipro_field_data AS m', function ($join) {
            $join->on('a.id', '=', 'm.sid')
                 ->where('m.fid', '=', 19);
-           })
-
-           ->leftjoin('vfq0g_sobipro_object AS n', function ($join) {
-           $join->on('a.parent', '=', 'n.id');
-
-           })
-
-           ->leftjoin('vfq0g_sobipro_relations AS o', function ($join) {
-           $join->on('a.id', '=', 'o.id');
-           })
-
-          ->join('vfq0g_sobipro_object AS p', function ($join) {
-           $join->on('o.pid', '=', 'p.id')
-                    ->where('p.parent', '!=', '1');
            });
-
-           //dd($query->toSql(), $query->getBindings());
 
           // options
 
@@ -180,10 +164,6 @@ class CarSearch extends Model{
             'k.baseData AS fuel_efficiency',
             'l.baseData AS score_offroad',
             'm.baseData AS  description',
-            'n.name AS  brand',
-            'p.name AS  model',
-            'n.id AS Brand ID',
-            'p.id AS model ID'
         ]);
 
 

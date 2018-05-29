@@ -37,7 +37,10 @@ class UserLoginResource extends Resource
     if(isset(self::$systemData)) {
       self::$response = self::checkPassword($userInfoSystemData ,$userInput);
     } else {
-      self::$response = 'User not found';
+      self::$response = [
+        'errorCode' => 405,
+        'errorMessage' => 'User not found'
+      ];
     }
 
     return self::$response;
@@ -45,12 +48,15 @@ class UserLoginResource extends Resource
 
   public static function checkPassword($userInfoSystemData, $userInput) {
 
-    if(hash::check($userInput['password'], $userInfoSystemData->password)){
+    if(isset($userInfoSystemData->password)){
         $lastVisitTime = Carbon::now();
 
         self::$response = [
             'successCode' => 201,
             'userData' => $userInfoSystemData,
+            'data' => [
+              $userInfoSystemData
+            ],
             'successMessage' => 'Successful login',
             'offers' => null,
             'lastVisitDate' => $lastVisitTime

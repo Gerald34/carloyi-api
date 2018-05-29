@@ -8,22 +8,23 @@ use App\CarSearch;
 
 class UserShowroom extends Model
 {
-    
+
     protected $table ="vfq0g_profiles_cars";
-    
+
     //
     public $id;
     public $uid;
     public $cid;
-    public $test_drive_date; 
-    
+    public $test_drive_date;
+    public static $response;
+
     protected $fillable = [
         'uid',
         'cid',
         'test_drive_date',
     ];
-    
-    
+
+
     public static function getShowroomByUser($id)
     {
         $entries = DB::table('vfq0g_profiles_cars')
@@ -39,11 +40,11 @@ class UserShowroom extends Model
                 'data' => []
             ];
         }
-        
+
         $car_ids = self::getCarIds($entries);
-        
+
         $cars  = CarSearch::getSearchCarsByIds($car_ids);
-        
+
         return
         [
             [
@@ -55,9 +56,83 @@ class UserShowroom extends Model
                 ]
             ]
         ];
-        
+
     }
-    
+
+    public static function getOffersByUser($id)
+    {
+        $entries = DB::table('vfq0g_dealer_user_posts')->where(['user_id' =>$id])->get();
+
+        if(count($entries) == 0) {
+          self::$response = [
+            'errorCode' => 311,
+            'errorMessage' => 'No offers were found',
+          ];
+        } else {
+          $car_ids = self::getCarIds_2($entries);
+          $cars  = CarSearch::getSearchCarsByIds($car_ids);
+          self::$response = [
+              'successCode' => 1,
+              'offers' => [
+                'entries' => $entries,
+                'cars' => $cars
+                ]
+          ];
+        }
+
+        return self::$response;
+    }
+
+    public static function getUserOffers($id)
+    {
+      $entries = DealerUserPost::getPostsByUserID($id);
+
+        if(count($entries) == 0)
+        {
+            return [
+                'code' => -1,
+                'error' => 'No offers were found',
+                'data' => []
+            ];
+        }
+
+        $car_ids = self::getCarIdsFromPosts($entries);
+
+        $cars  = CarSearch::getSearchCarsByIds($car_ids);
+
+        return
+        [
+            [
+                'code' =>1,
+                'error' => '',
+                'data' => [
+                    'entries' =>$entries,
+                    'cars' => $cars
+                ]
+            ]
+        ];
+
+    }
+    private static function getCarIdsFromPosts($entries)
+    {
+        $data = [];
+        foreach($entries as $entry)
+        {
+            $data[] = $entry->car_id;
+        }
+        return $data;
+    }
+
+    private static function getCarIds_2($entries)
+    {
+        $data = [];
+        foreach($entries as $entry)
+        {
+            $data[] = $entry->car_id;
+        }
+        return $data;
+    }
+
     private static function getCarIds($entries)
     {
         $data = [];
@@ -67,19 +142,19 @@ class UserShowroom extends Model
         }
         return $data;
     }
-    
+
     public function IsExisting ()
     {
-        
+
        $entry= self::where(['uid' => $this->uid, 'cid' => $this->cid] )->first();
-       return 
+       return
        [
            'exists'  =>($entry == null)? FALSE : TRUE,
            'entry' => $entry
        ];
-        
+
     }
-    
+
     public function sendRequest()
     {
          $cars=CarSearch::getSearchCarsByIds([$this->cid]);
@@ -92,15 +167,15 @@ class UserShowroom extends Model
                  'error' =>'User not found'
              ];
          }
-         
-         
+
+
          $body = "";
-         
-         $to = "sibu@coppertable.co.za,gerald@coppertable.co.za";
+
+         $to = "gerald@coppertable.co.za,mnqobimachi@gmail.com";
          $subject = "Carnet Quote requests";
 
         $message = "
-        
+
         <h3>User Details</h3>
         <table>
         <tr>
@@ -114,7 +189,7 @@ class UserShowroom extends Model
          <td>"  . $user->email  .  " </td>
         </tr>
         </table>
-       
+
         ";
         //Add cars
         $message .="<h3>Cars</h3><table>";
@@ -128,7 +203,7 @@ class UserShowroom extends Model
             $message .="<td>".  $car->type. "</td>";
             $message .="</tr>";
         }
-        
+
         $message .="</table>";
 
         // Always set content-type when sending HTML email
@@ -145,8 +220,8 @@ class UserShowroom extends Model
         }else{
             return -1;
         }
-         
+
     }
-    
-    
+
+
 }

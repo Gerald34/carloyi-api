@@ -38,9 +38,9 @@ Route::group(['prefix' => '/accounts' ], function()
 Route::group(['prefix' => '/showroom' ], function()
 {
     Route::get('/cars/{id}', 'ShowroomController@getUserShowroom');
-    Route::get('/offers/{id}', 'ShowroomController@showroomOffers');
     Route::post('/add', 'ShowroomController@addNew');
     Route::post('/placerequest', 'ShowroomController@placeRequest');
+
 });
 
 

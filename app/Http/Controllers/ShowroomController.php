@@ -9,44 +9,49 @@ use App\UserShowroom;
 class ShowroomController extends Controller
 {
     //
-    
+
     public function getUserShowroom($id)
     {
         return  UserShowroom::getShowroomByUser($id);
     }
-    
+
+    public function showroomOffers($id)
+    {
+        return  UserShowroom::getOffersByUser($id);
+    }
+
     public function placeRequest(Request $request)
     {
-        
-         $model = new UserShowroom; 
+
+         $model = new UserShowroom;
         $model->cid = $request->input('cid');
         $model->uid = $request->input('uid');
-        
-        
+
+
         $data = $model->IsExisting();
-        
+
         if($data['exists'])
         {
             $model_data = $data['entry'];
             if($model_data->requested == 1)
             {
-                
+
                 return
                 [
                 'code' =>  -1,
                 'error' => 'You already sent for request for this car',
                 'data' => $model_data
-                ];                
+                ];
             }
-            
+
             $added_post_results = \App\DealerShowroomPosts::addPost($model->cid, $model->uid);
-            
+
             $model->sendRequest();
             $model_data->requested = 1;
             $model_data->request_date = date("Y-m-d H:i:s");
             $model_data->save();
-            
-            
+
+
             return
             [
                 'code' =>  1,
@@ -54,7 +59,7 @@ class ShowroomController extends Controller
                 'data' => $model_data
             ];
         }
-        
+
         return
             [
                 'code' =>  -1,
@@ -66,14 +71,14 @@ class ShowroomController extends Controller
 
     public function addNew(Request $request)
     {
-        $model = new UserShowroom;        
-        
+        $model = new UserShowroom;
+
         $model->cid = $request->input('cid');
         $model->uid = $request->input('uid');
-        
-        
+
+
         $data = $model->IsExisting();
-        
+
         if($data['exists'])
         {
             return
@@ -83,11 +88,11 @@ class ShowroomController extends Controller
                 'data' => $data['entry']
             ];
         }
-        
+
         $model->fill($request->all());
-        
+
         $res = $model->save();
-        
+
         return
         [
             'code' => ($res)? 1 : -1,
