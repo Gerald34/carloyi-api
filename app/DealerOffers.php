@@ -4,38 +4,24 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-
-class DealerUserPost extends Model
+class DealerOffers extends Model
 {
-    //
     public $table = "vfq0g_dealer_user_posts";
 
     public $fillable = [
-        'request_id',
-        'parent_id',
-        'dealer_id',
         'user_id',
+        'dealer_id',
+        'offer_id',
         'car_id',
-        'offer',
-        'comment',
+        'request_id',
+        'status',
+        'created_at',
+        'updated_at',
         'car_brand',
         'car_model',
-        'car_name'
+        'car_name',
+        'dealer_location'
     ];
-
-    public $attributes = [
-        'request_id',
-        'parent_id',
-        'dealer_id',
-        'user_id',
-        'car_id',
-        'offer',
-        'comment',
-        'car_brand',
-        'car_model',
-        'car_name'
-    ];
-
 
     public $request_id;
     public $parent_id;
@@ -49,6 +35,7 @@ class DealerUserPost extends Model
     public $car_model;
     public $car_name;
     public $car_brand;
+    public $dealer_location;
 
     public static function getPostsByRequestID($id) {
         $posts = self::where(['request_id' => $id])->get();
@@ -60,23 +47,21 @@ class DealerUserPost extends Model
         return $posts;
     }
 
-     public function placeOffer() {
+    public function placeOffer() {
 
         $this->fill($this->getOfferData());
 
         $saved = $this->save();
-
-         var_dump($this);
 
         if($saved) {
             return ['code' => 1, 'error' =>'', 'data' => [$this] ];
         }
 
         return ['code' => -1, 'error' => 'failed to save', 'data' => [$this] ];
-     }
+    }
 
-     public function getOfferData() {
-         $data = [
+    public function getOfferData() {
+        $data = [
             'request_id' => $this->request_id,
             'parent_id' => $this->parent_id,
             'dealer_id' => $this->dealer_id,
@@ -86,14 +71,14 @@ class DealerUserPost extends Model
             'comment' => $this->comment,
             'car_brand' => $this->car_brand,
             'car_model' => $this->car_model,
-            'car_name' => $this->car_name
+            'car_name' => $this->car_name,
+            'dealer_location' => $this->dealer_location
         ];
 
-         return $data;
-     }
+        return $data;
+    }
 
     public static function getPost($id) {
         return self::find($id);
     }
-
 }

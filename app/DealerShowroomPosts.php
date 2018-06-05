@@ -8,12 +8,13 @@ class DealerShowroomPosts extends Model
 {
     //
     protected $table  ='vfq0g_dealer_showroom';
-    
-    protected $fillable = ['parent_id','request_id','dealer_id','offer','comment'];
-    
-    
+
+    protected $fillable = ['parent_id','request_id','dealer_id','offer','comment', 'status'];
+
+
     public function getDealerShowroomEntries($id)
     {
+
        $posts = self::where(['dealer_id' => $id])->get();
             if(count($posts) == 0)
             {
@@ -22,15 +23,14 @@ class DealerShowroomPosts extends Model
                     'error' =>'No posts found',
                 ];
             }
-            // 
+            //
 
             $entries  = [];
-
             foreach ($posts as $post)
             {
                 $entries[] = [
                     'entry' => $post,
-                    'user' => BaseUser::getUderById($post->user_id),
+                    'users' => BaseUser::getUderById($post->user_id),
                     'car' => CarSearch::getSearchCarsByIds([$post->car_id]),
                     'posts' =>  DealerUserPost::getPostsByRequestID($post->id)
                 ];
@@ -40,9 +40,9 @@ class DealerShowroomPosts extends Model
                 'code' => 1,
                 'data' => $entries
             ];
-        
+
     }
-    
+
     public function getFullShowroomPost($id)
     {
             $post = self::find($id);
@@ -59,14 +59,14 @@ class DealerShowroomPosts extends Model
                 'car' => CarSearch::getSearchCarsByIds([$post->car_id]),
                 'posts' =>  DealerUserPost::getPostsByRequestID($post->id)
             ];
-           
+
             return
             [
                 'code' => 1,
                 'data' => $entries
             ];
     }
-    
+
     public static function getPost($id)
     {
         return self::find($id);
@@ -74,7 +74,7 @@ class DealerShowroomPosts extends Model
 
     public static function addPost($car_id, $user_id)
     {
-        
+
         $dealers  = User::getActiveDealers();
         if($dealers['code'] == -1)
         {
@@ -84,7 +84,7 @@ class DealerShowroomPosts extends Model
                 'error' => 'No dealers ere found'
             ];
         }
-        
+
         $data = [];
         foreach($dealers['data'] as $key => $dealer)
         {
@@ -96,9 +96,9 @@ class DealerShowroomPosts extends Model
               'created_at' => date("Y-m-d H:i:s")
             ];
         }
-        
-        $bool = self::insert($data); 
-        
+
+        $bool = self::insert($data);
+
         if($bool)
         {
             return[
@@ -106,11 +106,11 @@ class DealerShowroomPosts extends Model
                 'error' =>''
             ];
         }
-        
+
         return [
             'code' => -1,
             'error' => 'Failed to insert to dealers'
         ];
-        
+
     }
 }

@@ -2,16 +2,12 @@
 
 namespace App\Http\Resources;
 
-
 use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Support\Facades\DB;
 use App\CarnetUsers;
-use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 // Monolog
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 

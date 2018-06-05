@@ -27,7 +27,11 @@ protected $fillable = array(
     'city',
     'province',
     'country',
-    'lastvisitDate'
+    'lastvisitDate',
+    'nationality',
+    'identity',
+    'agreement',
+    'gender'
 
 );
 }

@@ -73,10 +73,8 @@ class UserShowroom extends Model
           $cars  = CarSearch::getSearchCarsByIds($car_ids);
           self::$response = [
               'successCode' => 1,
-              'offers' => [
-                'entries' => $entries,
-                'cars' => $cars
-                ]
+              'offers' => $entries,
+              'cars' => $cars,
           ];
         }
 

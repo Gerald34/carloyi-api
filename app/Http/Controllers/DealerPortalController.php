@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DealsResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\DealerShowroomPosts;
 use App\DealerUserPost;
-
+use App\Http\Resources\DealerCarsResource;
+use Illuminate\Support\Facades\Input;
 use App\viewmodels\LoginViewModel;
 use \Validator;
+use App\DealerOffers;
 
 class DealerPortalController extends Controller
 {
+  public $response;
     //
 
    public function view($id)
@@ -38,29 +42,28 @@ class DealerPortalController extends Controller
 
         $passed = $this->checkDealerPermissions($results['roles']);
 
-        if($passed)
-        {
+        if($passed) {
             return $results;
         }
 
-        return
-            [
+        return [
               'code' => -1,
               'error' => 'You do not have permissions for this page'
             ];
     }
+
+    /**
+     * @param $roles
+     * @return bool
+     */
     private function checkDealerPermissions($roles)
     {
-         $success = FALSE;
-        if(count($roles) == 0)
-        {
+        $success = FALSE;
+        if(count($roles) == 0) {
             return  $success;
         }
 
-
-
-        foreach ($roles as $role)
-        {
+        foreach ($roles as $role) {
             if ($role->group_id == 11)
             {
                 $success = TRUE;
@@ -68,6 +71,25 @@ class DealerPortalController extends Controller
             }
         }
         return $success;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function saveDealerCars(Request $request) {
+
+      $dealerSelectedData = [
+        'dealer_id' => $request->input('dealer_id'),
+        'model_id' => $request->input('model_id')
+      ];
+
+      $this->response = DealerCarsResource::saveCollection($dealerSelectedData);
+
+      return $this->response;
+    }
+
+    public function getAllModels() {
 
     }
 
@@ -75,9 +97,8 @@ class DealerPortalController extends Controller
     {
         $model = new \App\DealerShowroomPosts();
         $car_ids = DB::table('vfq0g_dealer_showroom')
-                ->where([
-                    'dealer_id' => $id
-                ])->select('car_id')
+                ->where(['dealer_id' => $id])
+                ->select('car_id')
                 ->get();
 
         if(count($car_ids) == 0)
@@ -94,7 +115,7 @@ class DealerPortalController extends Controller
 
     public function placeOffer(Request $request)
     {
-        $model = new DealerUserPost;
+        $model = new DealerOffers;
 
         // $rules = [
         //   'request_id' => 'required',
@@ -116,28 +137,44 @@ class DealerPortalController extends Controller
         // }
 
         $request_id = $request->input('request_id');
+
         //valid
         $showroom_post = \App\DealerShowroomPosts::getPost($request_id);
 
-        if($showroom_post == null)
-        {
+        if($showroom_post == null) {
             return [
                 'code' =>'-1',
                 'error'=> 'Invalid input',
             ];
-        }
-            $model->request_id = $request_id;
-            $model->dealer_id =$showroom_post->dealer_id;
+        } else {
+
+//            $data = [
+//                'request_id' => $request_id,
+//                'dealer_id' => $showroom_post->dealer_id,
+//                'user_id' => $showroom_post->user_id,
+//                'car_id' => $showroom_post->car_id,
+//                'offer' => $request->input('offer'),
+//                'comment' => $request->input('comment'),
+//                'car_brand' => $request->input('car_brand'),
+//                'car_model' => $request->input('car_model'),
+//                'car_name' => $request->input('car_name')
+//            ];
+
+            $model->request_id = $request->input('request_id');
+            $model->dealer_id = $showroom_post->dealer_id;
             $model->user_id = $showroom_post->user_id;
             $model->car_id = $showroom_post->car_id;
             $model->offer = $request->input('offer');
             $model->comment = $request->input('comment');
+            $model->car_brand = $request->input('car_brand');
+            $model->car_model = $request->input('car_model');
+            $model->car_name = $request->input('car_name');
+            $model->dealer_location = $showroom_post->dealer_location;
 
-
-
-        return $model->placeOffer();
-
+            return $model->placeOffer();
+        }
     }
+
     public function reply(Request $request)
     {
 
@@ -191,5 +228,11 @@ class DealerPortalController extends Controller
 
         return $model->placeOffer();
 
+    }
+
+    public function dealerDeals($dealerID) {
+       $this->response = DealsResource::getDealerDeals($dealerID);
+
+       return $this->response;
     }
 }
