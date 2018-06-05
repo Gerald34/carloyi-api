@@ -93,8 +93,7 @@ class DealerPortalController extends Controller
 
     }
 
-    public function getDealerShowroom($id)
-    {
+    public function getDealerShowroom($id) {
         $model = new \App\DealerShowroomPosts();
         $car_ids = DB::table('vfq0g_dealer_showroom')
                 ->where(['dealer_id' => $id])
@@ -113,8 +112,7 @@ class DealerPortalController extends Controller
          return $posts_data;
     }
 
-    public function placeOffer(Request $request)
-    {
+    public function placeOffer(Request $request) {
         $model = new DealerOffers;
 
         // $rules = [
@@ -169,7 +167,6 @@ class DealerPortalController extends Controller
             $model->car_brand = $request->input('car_brand');
             $model->car_model = $request->input('car_model');
             $model->car_name = $request->input('car_name');
-            $model->dealer_location = $showroom_post->dealer_location;
 
             return $model->placeOffer();
         }

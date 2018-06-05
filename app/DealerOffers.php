@@ -14,6 +14,8 @@ class DealerOffers extends Model
         'offer_id',
         'car_id',
         'request_id',
+        'comment',
+        'offer',
         'status',
         'created_at',
         'updated_at',
@@ -50,7 +52,7 @@ class DealerOffers extends Model
     public function placeOffer() {
 
         $this->fill($this->getOfferData());
-
+        
         $saved = $this->save();
 
         if($saved) {
@@ -71,10 +73,9 @@ class DealerOffers extends Model
             'comment' => $this->comment,
             'car_brand' => $this->car_brand,
             'car_model' => $this->car_model,
-            'car_name' => $this->car_name,
-            'dealer_location' => $this->dealer_location
+            'car_name' => $this->car_name
         ];
-
+        
         return $data;
     }
 
