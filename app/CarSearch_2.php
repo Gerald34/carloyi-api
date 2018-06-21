@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @author macsox
  */
-class CarSearch extends Model{
+class CarSearch_2 extends Model{
     //put your code here
   /*
    * FIELD OPTIONS
@@ -48,26 +48,26 @@ class CarSearch extends Model{
 
     public static function searchByModel($model)
     {
+      return "This here" . $model;
         $id_option = [];
-        $car_ids = DB::table('vfq0g_sobipro_relations')
+        $cars = DB::table('vfq0g_allcars')
                 ->where([
-                    'oType' => 'entry',
-                    'pid' =>$model
-                ])->select('id')
-                ->get();
+                    'approved' => 1,
+                    'model_id' => $model
+                ])->get();
 
-        if(count($car_ids) == 0)
+        if(count($cars) == 0)
         {
             return ['code' => -1, 'error' => 'No entries match your model', 'data' => [] ];
         }
 
-        foreach($car_ids as $key => $val)
-        {
-           $id_option[] = $val->id;
-
-        }
-
-        $cars = self::_getSearchCarsByIds($id_option);
+        // foreach($car_ids as $key => $val)
+        // {
+        //    $id_option[] = $val->id;
+        //
+        // }
+        //
+        // $cars = self::_getSearchCarsByIds($id_option);
 
 
                 //return $cars->toSql();

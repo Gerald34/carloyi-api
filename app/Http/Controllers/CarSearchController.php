@@ -33,25 +33,23 @@ class CarSearchController extends Controller {
 
     public function getFilterOptions()
 {
-    $car_types  =DB::table('vfq0g_sobipro_field_option')
-            ->where([
-                'fid' => 4
-            ])->select('optValue')
-            ->get();
-    $clean_car_types = [];
-    foreach($car_types as $key => $val)
-    {
-        $clean_car_types[] = $val->optValue;
-    }
+    $car_types  =DB::table('vfq0g_car_types')->get();
+
     return
     [
         'code' => 1,
         'data' =>
         [
-            'car_types' => $clean_car_types
+            'car_types' => $car_types
         ]
     ];
 }
+
+    public function byType(Request $request) {
+      $this->response = CarSearch::getByCarType($request->input('car_type'));
+
+      return $this->response;
+    }
 
     public function filter(Request $request)
     {

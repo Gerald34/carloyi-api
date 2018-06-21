@@ -71,7 +71,7 @@ Route::get('/ttest', function(){
 });
 
 
-Route::get('/brands/{id}', function($id){
+Route::get('/brands/{id}', function($id) {
     return App\Brand::getBrand($id);
 });
 
@@ -81,6 +81,7 @@ Route::group(['prefix' => '/carsearch' ], function()
     Route::get('/affordability', 'CarSearchController@affordability');
     Route::post('/filter', 'CarSearchController@filter');
     Route::get('/filter-options', 'CarSearchController@getFilterOptions');
+    Route::post('/type', 'CarSearchController@byType');
 });
 //Async Validation Requests
 Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
