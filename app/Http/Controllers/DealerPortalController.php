@@ -12,20 +12,74 @@ use Illuminate\Support\Facades\Input;
 use App\viewmodels\LoginViewModel;
 use \Validator;
 use App\DealerOffers;
+use App\Http\Resources\PushNotificationResource;
 
 class DealerPortalController extends Controller
 {
   public $response;
     //
 
-   public function view($id)
-   {
+
+    public function fetchChats($dealerID) {
+        $chats = DB::table('active_chats')->where('dealer_id', $dealerID)->get();
+        $active = [];
+        foreach($chats as $object) {
+            $active[] = $object['chat_id'];
+        }
+
+        return $active;
+
+
+
+        if(!empty($chats)) {
+
+            $this->response = [
+                'successCode' => 333,
+                'successMessage' => 'Chats found',
+                'data' => $chats
+            ];
+
+        } else {
+            $this->response = [
+                'errorCode' => 333,
+                'errorMessage' => 'Chats found'
+            ];
+        }
+
+        return $this->response;
+
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function loginDealer(Request $request) {
+//        return md5($request->input('password'));
+        $dealerData = [
+            'email' => $request->input('email'),
+            'password' => $request->input('password')
+        ];
+
+        $this->response = LoginViewModel::DealerLogin($dealerData);
+
+        return $this->response;
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+   public function view($id) {
        $model = new DealerShowroomPosts();
        return $model->getFullShowroomPost($id);
    }
 
-    public function login(Request $request)
-    {
+   /**
+    * @return User Data Object
+    * @paran Request request
+    */
+    public function login(Request $request) {
         $email = $request->input('email');
         $password = $request->input('password');
 
@@ -67,7 +121,7 @@ class DealerPortalController extends Controller
             if ($role->group_id == 11)
             {
                 $success = TRUE;
-                break;;
+                break;
             }
         }
         return $success;
@@ -81,7 +135,9 @@ class DealerPortalController extends Controller
 
       $dealerSelectedData = [
         'dealer_id' => $request->input('dealer_id'),
-        'model_id' => $request->input('model_id')
+        'model_id' => $request->input('model_id'),
+        'availability' => 1,
+        'email' => $request->input('email')
       ];
 
       $this->response = DealerCarsResource::saveCollection($dealerSelectedData);
@@ -89,10 +145,28 @@ class DealerPortalController extends Controller
       return $this->response;
     }
 
-    public function getAllModels() {
+    public function floorCars($dealerID) {
+        $this->response = DealerCarsResource::getCars($dealerID);
 
+        return $this->response;
     }
 
+    public function removeDealerCars($modelID) {
+        $dealerSelectedData = [
+            'dealer_id' => $request->input('dealer_id'),
+            'model_id' => $request->input('model_id'),
+        ];
+
+        $this->response = DealerCarsResource::removeCollection($dealerSelectedData);
+
+        return $this->response;
+    }
+
+    /**
+     * Get Dealer Showroom
+     * @param {id}
+     * @return array
+     */
     public function getDealerShowroom($id) {
         $model = new \App\DealerShowroomPosts();
         $car_ids = DB::table('vfq0g_dealer_showroom')
@@ -100,45 +174,29 @@ class DealerPortalController extends Controller
                 ->select('car_id')
                 ->get();
 
-        if(count($car_ids) == 0)
-        {
+        if(count($car_ids) == 0) {
             return [
                 'code' => -1,
                 'error' => 'No entries found'
             ];
         }
+        
         $posts_data = $model->getDealerShowroomEntries($id);
-
-         return $posts_data;
+        return $posts_data;
     }
 
+    /**
+     * 
+     */
     public function placeOffer(Request $request) {
+        
         $model = new DealerOffers;
-
-        // $rules = [
-        //   'request_id' => 'required',
-        //   'offer' => 'required',
-        //   'comment' => 'required'
-        // ];
-        //
-        // $input = $request->only('request_id','offer', 'comment');
-        //
-        //
-        // $validator = Validator::make($input, $rules);
-        // if($validator->fails())
-        // {
-        //     return [
-        //         'code' =>'-1',
-        //         'error'=> 'Invalid input',
-        //         'data' => $validator->messages()
-        //     ];
-        // }
 
         $request_id = $request->input('request_id');
 
         //valid
-        $showroom_post = \App\DealerShowroomPosts::getPost($request_id);
-
+        $showroom_post = DealerShowroomPosts::getPost($request_id);
+        
         if($showroom_post == null) {
             return [
                 'code' =>'-1',
@@ -146,30 +204,30 @@ class DealerPortalController extends Controller
             ];
         } else {
 
-//            $data = [
-//                'request_id' => $request_id,
-//                'dealer_id' => $showroom_post->dealer_id,
-//                'user_id' => $showroom_post->user_id,
-//                'car_id' => $showroom_post->car_id,
-//                'offer' => $request->input('offer'),
-//                'comment' => $request->input('comment'),
-//                'car_brand' => $request->input('car_brand'),
-//                'car_model' => $request->input('car_model'),
-//                'car_name' => $request->input('car_name')
-//            ];
-
             $model->request_id = $request->input('request_id');
             $model->dealer_id = $showroom_post->dealer_id;
             $model->user_id = $showroom_post->user_id;
             $model->car_id = $showroom_post->car_id;
             $model->offer = $request->input('offer');
             $model->comment = $request->input('comment');
-            $model->car_brand = $request->input('car_brand');
-            $model->car_model = $request->input('car_model');
-            $model->car_name = $request->input('car_name');
+            $model->name = $request->input('name');
+            $model->status = 'pending';
+            $model->car_image = $request->input('car_image');
 
-            return $model->placeOffer();
+            $createOffer = $model->placeOffer();
+            if($createOffer['code'] === 1) {
+                $this->response = DealerShowroomPosts::getPost($request_id);
+                PushNotificationResource::sendOfferPushMessage(
+                    $showroom_post->user_id,
+                    $model->car_image,
+                    $model->name
+                );
+            } else {
+                $this->response = $createOffer;
+            }
         }
+
+        return $this->response;
     }
 
     public function reply(Request $request)
@@ -200,8 +258,7 @@ class DealerPortalController extends Controller
         $dealer = $parent_post->dealer_id;
 
 
-        if($parent_post == null)
-        {
+        if($parent_post == null) {
             return [
                 'code' =>'-1',
                 'error'=> 'Invalid post',
@@ -233,3 +290,7 @@ class DealerPortalController extends Controller
        return $this->response;
     }
 }
+
+// sort by latest
+// Auto highlight
+// User email for dealer offers

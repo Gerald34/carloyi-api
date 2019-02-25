@@ -30,8 +30,9 @@ protected $fillable = array(
     'lastvisitDate',
     'nationality',
     'identity',
-    'agreement',
-    'gender'
+    'agreement' => '',
+    'gender',
+    'updateDateTime'
 
 );
 }

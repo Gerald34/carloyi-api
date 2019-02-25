@@ -19,10 +19,10 @@ class DealerOffers extends Model
         'status',
         'created_at',
         'updated_at',
-        'car_brand',
-        'car_model',
-        'car_name',
-        'dealer_location'
+        'car_image',
+        // 'car_model',
+        'name',
+        // 'dealer_location'
     ];
 
     public $request_id;
@@ -35,9 +35,10 @@ class DealerOffers extends Model
     public $car_image;
     public $attachment;
     public $car_model;
-    public $car_name;
+    public $name;
     public $car_brand;
     public $dealer_location;
+    public $response;
 
     public static function getPostsByRequestID($id) {
         $posts = self::where(['request_id' => $id])->get();
@@ -56,10 +57,14 @@ class DealerOffers extends Model
         $saved = $this->save();
 
         if($saved) {
-            return ['code' => 1, 'error' =>'', 'data' => [$this] ];
+            $this->response = [
+                'code' => 1
+            ];
+        } else {
+            $this->response = ['code' => -1, 'error' => 'failed to save', 'data' => [$this]];
         }
 
-        return ['code' => -1, 'error' => 'failed to save', 'data' => [$this] ];
+        return $this->response;
     }
 
     public function getOfferData() {
@@ -73,7 +78,8 @@ class DealerOffers extends Model
             'comment' => $this->comment,
             'car_brand' => $this->car_brand,
             'car_model' => $this->car_model,
-            'car_name' => $this->car_name
+            'name' => $this->name,
+            'car_image' => $this->car_image
         ];
         
         return $data;

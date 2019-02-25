@@ -4,16 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DealerCars extends Model
+class DealersModel extends Model
 {
     protected $primaryKey = 'id';
-    protected $table = 'vfq0g_dealer_cars';
+    protected $table = 'vfq0g_dealers';
     public $timestamps = false;
     protected $fillable = array(
-        'id',
-        'dealer_id',
-        'model_id',
+        'name',
         'email',
-        'availability'
+        'password',
+        'location',
+        'status'
     );
 }

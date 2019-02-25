@@ -27,8 +27,15 @@ class UserRegistrationModel extends Model
         'faxNumber' => '',
         'physicalAddress' => '',
         'postalAddress' => '',
-        'params' => ''
+        'params' => '',
+        'api_token',
+        'otp',
+        'activation',
+        'identity',
+        'nationality',
+        'updateDateTime',
+        'gender',
+        'agreement'
     );
-    
     
 }

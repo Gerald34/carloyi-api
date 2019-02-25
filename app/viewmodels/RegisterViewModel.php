@@ -21,9 +21,12 @@ class RegisterViewModel extends Model
     public $email;
     public $password;
     public $api_token;
+    public $status;
+    public $phone;
+    public $otp;
     //public $lastresetTime;
 
-    protected $fillable = ['name','username','lastName','email','password','api_token'];
+    protected $fillable = ['name','username','lastName','email','password','api_token','phone','status', 'otp'];
 
 
     public function register() {
@@ -71,7 +74,8 @@ class RegisterViewModel extends Model
             'password' => $this->password,
             'username' => $this->email,
             'lastName' => $this->lastName,
-            'api_token' => str_random(60)
+            'api_token' => str_random(60),
+            'status' => $this->status
         ];
     }
 

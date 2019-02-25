@@ -10,16 +10,16 @@ class Brand extends Model
     //
     protected $table ="vfq0g_brands";
 
-    public static function getBrandOptions()
-    {
-        $brands = Brand::where('state',1)->get(['id','brand']);
+    public static function getBrandOptions() {
+        $brands = Brand::where('state',1)->orderBy('brand', 'asc')->get(['id','brand']);
         return $brands;
     }
+
     public static function getBrand($id)
     {
 
 
-        $brand= Brand::where('id',$id)
+        $brand= Brand::where('id',$id)->orderBy('brand', 'asc')
                 ->get(['id','brand'])->first();
 
         if($brand == null){
@@ -44,6 +44,7 @@ class Brand extends Model
     {
         $models = DB::table('vfq0g_models')
                 ->where('brand_id', $id)
+                ->orderBy('model', 'asc')
                 ->get(['id','model']);
         return $models;
     }

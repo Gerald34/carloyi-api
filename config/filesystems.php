@@ -45,7 +45,7 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/cars/live'),
         ],
 
         'public' => [
@@ -53,6 +53,14 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+        ],
+
+        'ftp' => [
+            'driver' => 'ftp',
+            'host' => env('ftp.154.66.197.198'),
+            'username' => env('root'),
+            'password' => env('mmdomainspassword'),
+            'root' => '/var/www/html/images/' // for example: /var/www/html/dev/images
         ],
 
         's3' => [

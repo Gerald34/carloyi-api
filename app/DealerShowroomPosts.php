@@ -3,31 +3,31 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\DB;
 class DealerShowroomPosts extends Model
 {
     //
     protected $table  ='vfq0g_dealer_showroom';
 
-    protected $fillable = ['parent_id','request_id','dealer_id','offer','comment', 'status'];
-
+    protected $fillable = ['parent_id','request_id','user_id', 'name','car_id','dealer_id','offer','comment', 'status', 'car_image', 'extras'];
+    public static $response;
 
     public function getDealerShowroomEntries($id)
     {
 
-       $posts = self::where(['dealer_id' => $id])->get();
-            if(count($posts) == 0)
-            {
-                return [
+       $posts = self::where(['dealer_id' => $id])->orderBy('created_at', 'DESC')->get();
+       
+            if(count($posts) == 0) {
+                $response = [
                     'code' => -1,
                     'error' =>'No posts found',
                 ];
             }
             //
-
+            
             $entries  = [];
-            foreach ($posts as $post)
-            {
+
+            foreach ($posts as $post) {
                 $entries[] = [
                     'entry' => $post,
                     'users' => BaseUser::getUderById($post->user_id),
@@ -35,11 +35,13 @@ class DealerShowroomPosts extends Model
                     'posts' =>  DealerUserPost::getPostsByRequestID($post->id)
                 ];
             }
-            return
-            [
+
+            $response = [
                 'code' => 1,
                 'data' => $entries
             ];
+
+            return $response;
 
     }
 
@@ -72,45 +74,44 @@ class DealerShowroomPosts extends Model
         return self::find($id);
     }
 
-    public static function addPost($car_id, $user_id)
-    {
-
+    public static function addPost($car_id, $user_id) {
+        
         $dealers  = User::getActiveDealers();
-        if($dealers['code'] == -1)
-        {
+        if($dealers['code'] == -1) {
             return
             [
                 'code' => -1,
-                'error' => 'No dealers ere found'
+                'error' => 'No dealers were found'
             ];
+        } else {
+            $data = [];
+            foreach($dealers['data'] as $key => $dealer) {
+                $data[] =[
+                  'dealer_id' => $dealer->id,
+                  'user_id' => $user_id,
+                  'status' => 1,
+                  'car_id' => $car_id,
+                  'created_at' => date("Y-m-d H:i:s")
+                ];
+            }
+    
+            $bool = self::insert($data);
+    
+            if($bool) {
+                self::$response = [
+                    'code' => 1,
+                    'error' => ''
+                ];
+            } else {
+                self::$response = [
+                    'code' => -1,
+                    'error' => 'Failed to insert to dealers'
+                ];
+            }
         }
 
-        $data = [];
-        foreach($dealers['data'] as $key => $dealer)
-        {
-            $data[] =[
-              'dealer_id' => $dealer->id,
-              'user_id' => $user_id,
-              'status' => 1,
-              'car_id' => $car_id,
-              'created_at' => date("Y-m-d H:i:s")
-            ];
-        }
 
-        $bool = self::insert($data);
 
-        if($bool)
-        {
-            return[
-                'code' => 1,
-                'error' =>''
-            ];
-        }
-
-        return [
-            'code' => -1,
-            'error' => 'Failed to insert to dealers'
-        ];
-
+        return self::$response;
     }
 }

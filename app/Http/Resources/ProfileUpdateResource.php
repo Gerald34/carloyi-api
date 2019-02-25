@@ -4,23 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class ActivateEmailResource extends Resource
+class ProfileUpdateResource extends Resource
 {
     private static $response;
-
-    public static function activateEmail($newUser)
-    {
-        if ($newUser == null) {
-            self::$response = [
-                'code' => -1,
-                'error' => 'User not found'
-            ];
-        } else {
-            self::$response = self::emailTemplate($newUser);
-        }
-
-        return self::$response;
-    }
 
     public static function emailTemplate($newUser)
     {
@@ -31,7 +17,7 @@ class ActivateEmailResource extends Resource
         // $to = "info@carloyi.com,gerald@coppertable.co.za,mnqobimachi@gmail.com," . $newUser->email;
         $to = $newUser->email;
         // $to = 'gerald@coppertable.co.za';
-        $subject = 'Welcome to Carloyi Users';
+        $subject = "Hi {$newUser->name} {$newUser->lastName} your account has been successfully updated";
 
         $message = "
 <style>
@@ -97,13 +83,14 @@ margin-bottom: 0;
 </a>
 
 </div>
-<h1 class='helloMsg'>Hi " . ucfirst($newUser->name) . "</h1>
+<h1 class='helloMsg'>Hi " . ucfirst($newUser->name) . " " . ucfirst($newUser->lastName) . "</h1>
 <div class='mailcontent'>
 <h3 class='mailHeader'>Your account information</h3>
 <p><bold>Firstname:</bold> " . ucfirst($newUser->name) . "</p>
 <p><bold>Lastname:</bold> " . ucfirst($newUser->lastName) . "</p>
-<p><bold>Username:</bold> " . $newUser->email . "</p>
-<p>Welcome to the one-stop, convenience dealership</p></div>
+<p><bold>Email:</bold> " . $newUser->email . "</p>
+<p><bold>Profile Update Date:</bold> " . $newUser->updateDateTime . "</p>
+</div>
 </div>
 ";
 
