@@ -10,6 +10,10 @@ use App\DealersModel as Dealers;
 use App\models as Models;
 use App\Brand as Brands;
 use App\AllCarsModel as Cars;
+use App\BlogPostsModel as BlogPosts;
+use Illuminate\Support\Facades\Storage;
+use App\FeaturedArticleModel as FeaturedArticles;
+
 class AuthorizedResource extends Resource
 {
     public static $response;
@@ -330,6 +334,93 @@ class AuthorizedResource extends Resource
         public static function updateVehicle($updateCar) {
         $update = Cars::where('id', $updateCar['id'])->update($updateCar);
         return $update;
+    }
+
+/**
+     * @return BlogPosts[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public static function allPosts()
+    {
+        return BlogPosts::all();
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function newBlog($post)
+    {
+        $newBlog = new BlogPosts;
+        $newBlog->blog_title = $post['blog_title'];
+        $newBlog->blog_description = $post['blog_description'];
+        $newBlog->blog_caption = $post['blog_caption'];
+        $newBlog->blog_thumbnail = $post['blog_thumbnail']['path'];
+        $newBlog->blog_background = $post['blog_background']['path'];
+        $newBlog->external_link = $post['external_link'];
+        $newBlog->updated_at = $post['updated_at'];
+        $newBlog->created_at = $post['created_at'];
+        $newBlog->save();
+
+        return self::$response = [
+            'successCode' => 200,
+            'successMessage' => 'Blog post successful',
+            'allPosts' => self::allPosts()
+        ];
+    }
+
+    /**
+     * @param $edit
+     * @return array
+     */
+    public static function editPost($edit) {
+        $newBlog = BlogPosts::find($edit['id']);
+        $newBlog->blog_title = $edit['blog_title'];
+        $newBlog->blog_description = $edit['blog_description'];
+        $newBlog->blog_caption = $edit['blog_caption'];
+        $newBlog->blog_thumbnail = $edit['blog_thumbnail'];
+        $newBlog->blog_background = $edit['blog_background'];
+        $newBlog->external_link = $edit['external_link'];
+        $newBlog->updated_at = $edit['updated_at'];
+        $newBlog->save();
+
+        return self::$response = [
+            'successCode' => 200,
+            'successMessage' => 'Blog post successful',
+            'allPosts' => self::allPosts()
+        ];
+    }
+
+    /**
+     * @param $postID
+     * @return mixed
+     */
+    public static function getPost($postID) {
+        return BlogPosts::where('id', $postID)->get();
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function newArticle($post) {
+        $newBlog = new FeaturedArticles;
+        $newBlog->featured_title = $post['featured_title'];
+        $newBlog->article_slug = $post['article_slug'];
+        $newBlog->featured_caption = $post['featured_caption'];
+        $newBlog->featured_thumbnail = $post['featured_thumbnail'];
+        $newBlog->featured_background_image = $post['featured_background_image'];
+        $newBlog->featured_story = $post['featured_story'];
+        $newBlog->external_link = $post['external_link'];
+        $newBlog->author = $post['author'];
+        $newBlog->updated_at = $post['updated_at'];
+        $newBlog->created_at = $post['created_at'];
+        $newBlog->save();
+
+        return self::$response = [
+            'successCode' => 200,
+            'successMessage' => 'Blog post successful',
+            'allPosts' => self::allPosts()
+        ];
     }
 
 }

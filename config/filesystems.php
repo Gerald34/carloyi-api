@@ -48,6 +48,16 @@ return [
             'root' => storage_path('app/cars/live'),
         ],
 
+        'thumbnail' => [
+            'driver' => 'local',
+            'root' => storage_path('app/article/thumbnail'),
+        ],
+
+        'background' => [
+            'driver' => 'local',
+            'root' => storage_path('app/article/background'),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

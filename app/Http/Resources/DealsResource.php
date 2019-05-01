@@ -65,9 +65,14 @@ class DealsResource extends Resource
         $update = DealsModel::where('id', $offerID['offer_id'])->get();
 
         if ($update !== null) {
-           DealsModel::where('id', $offerID['offer_id'])->update(['status' => 1]);
-           self::$response = [ 'response' => 1 ];
-        } else {
+           DealsModel::where('id', $offerID['offer_id'])->update(['status' => 'accepted']);
+//           self::$response = [ 'response' => 1, 'dealer_id' => DealsModel::select('dealer_id')->where('id', $offerID['offer_id']) ];
+	$dealerID = DealsModel::select('dealer_id')->where('id', $offerID['offer_id'])->first();
+                self::$response = [ 'response' => [
+               'code' => 1,
+               'dealer_id' => $dealerID->dealer_id
+           ]];
+	 } else {
             self::$response = [ 'response' => 0 ];
         }
 
@@ -131,7 +136,7 @@ class DealsResource extends Resource
 
         $deals = DB::table('vfq0g_dealer_user_posts')
         ->where('dealer_id', $dealerID)
-	//->sortBy('created_at')
+	->orderBy('created_at', 'DESC')
 	->get();
 
         if(count($deals) > 0):

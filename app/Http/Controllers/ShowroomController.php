@@ -451,13 +451,14 @@ class ShowroomController extends Controller
 
         $offerID = ['offer_id' => $offerID];
         $update = DealsResource::updateStatus($offerID);
-
-        if ($update['response'] === 1) {
-
+	$offer = DealsModel::where('id', $offerID)->get();
+        if ($update['response']['code'] === 1) {
+// $this->createActiveChat($offerID);
             $this->response = [
                 'successCode' => 400,
                 'successMessage' => 'You can now book for a test drive or (Click on the Chat Room tab)',
-                'response' => $update
+                'response' => $update,
+		'offer' => $offer
             ];
 
         } else if ($update['response'] === 0) {

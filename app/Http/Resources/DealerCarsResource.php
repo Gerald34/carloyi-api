@@ -29,8 +29,8 @@ class DealerCarsResource extends Resource
             //     'availability' => $dealerSelectedData['availability']
             // ]);
             $dealerCars = new DealerCars;
-            $increment = 1;
-            $dealerCars->id = ++$increment;
+            // $increment = 1;
+            // $dealerCars->id = ++$increment;
             $dealerCars->dealer_id = $dealerSelectedData['dealer_id'];
             $dealerCars->model_id = $dealerSelectedData['model_id'];
             $dealerCars->email = $dealerSelectedData['email'];
@@ -165,26 +165,12 @@ class DealerCarsResource extends Resource
      * @param $dealerSelectedData
      * @return array
      */
-    public static function removeCollection($dealerSelectedData)
+        public static function removeCollection($dealerSelectedData)
     {
-        if (DealerCars::where('model_id', $dealerSelectedData['model_id'])->exists()) {
-            self::$response = [
-                'errorCode' => 809,
-                'errorMessage' => 'Car saved already'
-            ];
-        } else {
-            $removeCar = DealerCars::where('dealer_id');
-            // $dealerCars->save();
-            $allDealerCars = DealerCars::where('dealer_id', $dealerSelectedData['dealer_id'])
-                ->get();
-            self::$response = [
-                'successCode' => 208,
-                'successMessage' => 'Car Successfully Saved',
-                'allDealerCars' => self::getCars($allDealerCars[0]->dealer_id)
-            ];
-        }
+                $delete = DealerCars::where('model_id', $dealerSelectedData['model_id']);
+        $delete->where('dealer_id', $dealerSelectedData['dealer_id'])->delete();
 
-        return self::$response;
+        return self::$response = ['response' => 'Model Deleted'];
     }
 }
 

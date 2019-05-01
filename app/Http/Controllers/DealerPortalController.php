@@ -151,7 +151,7 @@ class DealerPortalController extends Controller
         return $this->response;
     }
 
-    public function removeDealerCars($modelID) {
+    public function removeDealerCars(Request $request) {
         $dealerSelectedData = [
             'dealer_id' => $request->input('dealer_id'),
             'model_id' => $request->input('model_id'),

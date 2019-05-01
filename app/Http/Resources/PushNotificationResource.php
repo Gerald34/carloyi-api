@@ -141,14 +141,16 @@ self::sendSubscriptionPushMessage($subscriptionData);
      */
     public static function sendOfferPushMessage($userID, $carImage, $carName) {
 
-        $client = new Client([
-            'base_uri' => 'http://127.0.0.1:8000',
-            'verify' => base_path('cacert.pem'),
-        ]);
+	$dealerSubscriptions = PushNotificationModel::where('userid', $userID)->first();
+	// return $dealerSubscriptions->endpoint;
+        $client = new Client(['verify' => base_path('cacert.pem')]);
         $client->post(
             'https://node.carloyi.com:8080/sendOfferNotification',
             [ RequestOptions::JSON =>
-                [
+		 [
+                    'endpoint' => $dealerSubscriptions->endpoint,
+                    'auth' => $dealerSubscriptions->auth,
+                    'p256dh' => $dealerSubscriptions->p256dh,
                     'userID' => $userID,
                     'car_image' =>  $carImage,
                     'carName' => $carName

@@ -35,12 +35,19 @@ Route::post('/register', 'UserRegistrationController@checkUserEmail');
 Route::get('/firebase', 'FireBaseController@getFireBaseData');
 Route::post('/notification', 'ShowroomController@sendNotification');
 Route::post('/newPasswordToken', 'UserLoginController@newPasswordToken');
+Route::get('specials', 'CarSpecialsController@getSpecialOffers');
 Route::group(['prefix' => '/accounts' ], function()
 {
     Route::post('/register', 'AccountsController@register');
-
-
 });
+
+Route::group(['prefix' => '/blog'], function () {
+    Route::get('/get', 'NewsController@getNews');
+    Route::get('latest', 'NewsController@featured');
+    Route::get('featured/{articleID}', 'NewsController@featuredArtice');
+    Route::get('post/{articleID}', 'NewsController@blogPost');
+});
+
 
 Route::group(['prefix' => '/showroom' ], function()
 {
@@ -169,6 +176,26 @@ Route::group(['prefix' => '/admin'], function() {
     Route::group(['prefix' => 'images'], function() {
        Route::get('/image/{filename}', 'AuthorizedController@image');
        Route::post('/single', 'AuthorizedController@store');
+    });
+
+    Route::group(['prefix' => 'blog'], function() {
+       Route::get('get', 'AuthorizedController@getBlogPosts');
+       Route::get('edit/{postID}', 'AuthorizedController@getBlogPost');
+       Route::post('create', 'AuthorizedController@createBlog');
+       Route::post('edit_post', 'AuthorizedController@editPost');
+       Route::get('featured','AuthorizedController@featured');
+       Route::post('new_article', 'AuthorizedController@createNewArticle');
+    });
+
+    Route::group(['prefix' => 'articles'], function() {
+        Route::get('get/{articleID}', 'ArticleController@getArticle');
+    });
+
+    Route::group(['prefix' => 'special_offers'], function() {
+        Route::get('get', 'SpecialOffersController@getOffers');
+        Route::get('offerInformation/{offerID}', 'SpecialOffersController@getFullInformation');
+        Route::post('update_image', 'SpecialOffersController@updateOfferImage');
+        Route::post('update', 'SpecialOffersController@updateOffer');
     });
 
 });

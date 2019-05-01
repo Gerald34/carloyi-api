@@ -18,8 +18,9 @@ class PushNotificationController extends Controller
 
     public function offerPushMessage(Request $request) {
         $userID = $request->input('userID');
-
-        return PushNotificationResource::sendOfferPushMessage($userID);
+        $carImage = $request->input('car_image');
+        $carName = $request->input('carName');
+        return PushNotificationResource::sendOfferPushMessage($userID, $carImage, $carName);
     }
 
     public function requestPushMessage(Request $request) {

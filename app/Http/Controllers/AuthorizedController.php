@@ -13,6 +13,10 @@ use App\AllCarsModel as AllCars;
 use App\models;
 use Illuminate\Support\Facades\Storage;
 use App\Brand;
+use Carbon\Carbon;
+use App\FeaturedArticleModel as FeaturedArticles;
+use App\BlogPostsModel as BlogPosts;
+
 class AuthorizedController extends Controller
 {
     private $_email;
@@ -129,11 +133,39 @@ class AuthorizedController extends Controller
 	$clear = AuthorizedResource::truncateTable('vfq0g_allcars');
         if ($clear['successCode'] === 200) {
             $data = [];
-            for ($i = 0; $i < count($customerArr); $i ++)
-            {
-                $data[] = AllCars::firstOrCreate($customerArr[$i]);
+            foreach ($customerArr as $car) {
+                $import = new AllCars;
+                $import->id = $car['id'];
+                $import->state = $car['state'];
+                $import->brand_id = $car['brand_id'];
+                $import->model_id = $car['model_id'];
+                $import->car_image = $car['car_image'];
+                $import->name = $car['name'];
+                $import->price = $car['price'];
+                $import->car_type = $car['car_type'];
+                $import->city_driving = $car['city_driving'];
+                $import->carrying_people = $car['carrying_people'];
+                $import->long_distance_driving = $car['long_distance_driving'];
+                $import->off_roading = $car['off_roading'];
+                $import->moving_luggage = $car['moving_luggage'];
+                $import->fuel_efficiency = $car['fuel_efficiency'];
+                $import->enjoyment = $car['enjoyment'];
+                $import->practicality = $car['practicality'];
+                $import->performance = $car['performance'];
+                $import->comfort = $car['comfort'];
+                $import->reliability = $car['reliability'];
+                $import->total_score = $car['total_score'];
+                $import->approved = $car['approved'];
+                $import->verdict = $car['verdict'];
+                $import->engine_type = $car['engine_type'];
+                $import->power_kw = $car['power_kw'];
+                $import->torque_nm = $car['torque_nm'];
+                $import->acceleration_0_100 = $car['acceleration_0_100'];
+                $import->consumption_l_100km = $car['consumption_l_100km'];
+                $import->updated_at = Carbon::now();
+                $import->created_at = Carbon::now();
+                $import->save();
             }
-
             $this->response = AuthorizedResource::getAllCars();
         } else {
              $this->response = [
@@ -359,16 +391,186 @@ class AuthorizedController extends Controller
         if($car === 1) {
             $this->response = [
                 'successCode' => 200,
-                'successMessage' => $car['name'] . ' has been successfully updated.'
+                'successMessage' => $updateCar['name'] . ' has been successfully updated.'
             ];
         } else {
             $this->response = [
                 'errorCode' => 203,
-                'errorMessage' => $car['name'] . ' could not be updated.'
+                'errorMessage' => $updateCar['name'] . ' could not be updated.'
             ];
         }
 
         return $this->response;
+    }
+
+    /**
+     * Blog Posts
+     */
+    public function getBlogPosts()
+    {
+        return BlogPosts::all();
+    }
+
+    /**
+     * @param $postID
+     * @return mixed
+     */
+    public function getBlogPost($postID)
+    {
+        return AuthorizedResource::getPost($postID);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function createBlog(Request $request)
+    {
+        $post = [
+            'blog_title' => strip_tags($request->input('blog_title')),
+            'blog_description' => strip_tags($request->input('blog_description')),
+            'blog_caption' => strip_tags($request->input('blog_caption')),
+            'blog_thumbnail' => $this->_storeThumbnail($request),
+            'blog_background' => $this->_storeBackground($request),
+            'external_link' => strip_tags($request->input('external_link')),
+            'updated_at' => Carbon::now(),
+            'created_at' => Carbon::now()
+        ];
+
+        return AuthorizedResource::newBlog($post);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function editPost(Request $request) {
+
+        $thumbnailImage = 'none.jpg';
+        if($request->hasFile('article_thumbnail')) {
+            $thumbnailResult = $this->_storeThumbnail($request);
+            $thumbnailImage = $thumbnailResult['path'];
+        }
+
+        $backgroundImage = 'none.jpg';
+        if($request->hasFile('article_background')) {
+            $backgroundResult = $this->_storeBackground($request);
+            $backgroundImage = $backgroundResult['path'];
+        }
+
+        $edit = [
+            'id' => strip_tags($request->input('itemID')),
+            'blog_title' => strip_tags($request->input('blog_title')),
+            'blog_description' => strip_tags($request->input('blog_description')),
+            'blog_caption' => strip_tags($request->input('blog_caption')),
+            'blog_thumbnail' => $thumbnailImage,
+            'blog_background' => $backgroundImage,
+            'external_link' => strip_tags($request->input('external_link')),
+            'updated_at' => Carbon::now(),
+        ];
+
+        return AuthorizedResource::editPost($edit);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    private function _storeThumbnail($request) {
+        $fileNameToStore = [];
+
+        if ($request->hasFile('article_thumbnail')) {
+
+            // get filename with extension
+            $fileNameWithExtension = $request->file('article_thumbnail')->getClientOriginalName();
+
+            // get filename without extension
+            $filename = pathinfo($fileNameWithExtension, PATHINFO_FILENAME);
+
+            // get file extension
+            $extension = $request->file('article_thumbnail')->getClientOriginalExtension();
+
+            // filename to store
+            $fileNameToStore = $filename . '_' . uniqid() . '.' . $extension;
+
+            // upload File to external server
+            Storage::disk('thumbnail')->put($fileNameToStore, fopen($request->file('article_thumbnail'), 'r+'));
+
+            // store $fileNameToStore in the database
+        }
+
+        return ['status' => 'Images uploaded', 'path' => $fileNameToStore];
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    private function _storeBackground($request) {
+        $fileNameToStore = [];
+
+        if ($request->hasFile('article_background')) {
+
+            // get filename with extension
+            $fileNameWithExtension = $request->file('article_background')->getClientOriginalName();
+
+            // get filename without extension
+            $filename = pathinfo($fileNameWithExtension, PATHINFO_FILENAME);
+
+            // get file extension
+            $extension = $request->file('article_background')->getClientOriginalExtension();
+
+            // filename to store
+            $fileNameToStore = $filename . '_' . uniqid() . '.' . $extension;
+
+            // upload File to external server
+            Storage::disk('background')->put($fileNameToStore, fopen($request->file('article_background'), 'r+'));
+
+            // store $fileNameToStore in the database
+        }
+
+        return ['status' => 'Images uploaded', 'path' => $fileNameToStore];
+    }
+
+    /**
+     * @return FeaturedArticles[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function featured() {
+        return FeaturedArticles::all();
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function createNewArticle(Request $request) {
+
+        $thumbnailImage = 'none.jpg';
+        if($request->hasFile('article_thumbnail')) {
+            $thumbnailResult = $this->_storeThumbnail($request);
+            $thumbnailImage = $thumbnailResult['path'];
+        }
+
+        $backgroundImage = 'none.jpg';
+        if($request->hasFile('article_background')) {
+            $backgroundResult = $this->_storeBackground($request);
+            $backgroundImage = $backgroundResult['path'];
+        }
+
+        $post = [
+            'featured_title' => strip_tags($request->input('featured_title')),
+            'article_slug' => strip_tags($request->input('article_slug')),
+            'featured_caption' => strip_tags($request->input('featured_caption')),
+            'featured_thumbnail' => $thumbnailImage,
+            'featured_background_image' => $backgroundImage,
+            'featured_story' => $request->input('featured_story'),
+            'author' => $request->input('author'),
+            'external_link' => strip_tags($request->input('external_link')),
+            'updated_at' => Carbon::now(),
+            'created_at' => Carbon::now()
+        ];
+
+        return AuthorizedResource::newArticle($post);
     }
 }
 
