@@ -188,6 +188,7 @@ Route::group(['prefix' => '/admin'], function() {
     });
 
     Route::group(['prefix' => 'articles'], function() {
+        Route::get('articles', 'ArticleController@featured');
         Route::post('new_article', 'ArticleController@createNewArticle');
         Route::get('get/{articleID}', 'ArticleController@getArticle');
         Route::post('edit', 'ArticleController@editArticle');

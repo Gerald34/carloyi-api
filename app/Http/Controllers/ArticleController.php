@@ -126,4 +126,12 @@ class ArticleController extends Controller
     public function featuredArticle($articleSlug) {
         return Articles::where('article_slug', $articleSlug)->first();
     }
+
+        /**
+     * @return FeaturedArticles[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function featured() {
+        return Articles::all();
+    }
+
 }
