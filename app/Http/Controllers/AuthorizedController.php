@@ -538,39 +538,5 @@ class AuthorizedController extends Controller
     public function featured() {
         return FeaturedArticles::all();
     }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    public function createNewArticle(Request $request) {
-
-        $thumbnailImage = 'none.jpg';
-        if($request->hasFile('article_thumbnail')) {
-            $thumbnailResult = $this->_storeThumbnail($request);
-            $thumbnailImage = $thumbnailResult['path'];
-        }
-
-        $backgroundImage = 'none.jpg';
-        if($request->hasFile('article_background')) {
-            $backgroundResult = $this->_storeBackground($request);
-            $backgroundImage = $backgroundResult['path'];
-        }
-
-        $post = [
-            'featured_title' => strip_tags($request->input('featured_title')),
-            'article_slug' => strip_tags($request->input('article_slug')),
-            'featured_caption' => strip_tags($request->input('featured_caption')),
-            'featured_thumbnail' => $thumbnailImage,
-            'featured_background_image' => $backgroundImage,
-            'featured_story' => $request->input('featured_story'),
-            'author' => $request->input('author'),
-            'external_link' => strip_tags($request->input('external_link')),
-            'updated_at' => Carbon::now(),
-            'created_at' => Carbon::now()
-        ];
-
-        return AuthorizedResource::newArticle($post);
-    }
 }
 

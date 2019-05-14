@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\File;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -183,12 +185,24 @@ Route::group(['prefix' => '/admin'], function() {
        Route::get('edit/{postID}', 'AuthorizedController@getBlogPost');
        Route::post('create', 'AuthorizedController@createBlog');
        Route::post('edit_post', 'AuthorizedController@editPost');
-       Route::get('featured','AuthorizedController@featured');
-       Route::post('new_article', 'AuthorizedController@createNewArticle');
     });
 
     Route::group(['prefix' => 'articles'], function() {
+        Route::post('new_article', 'ArticleController@createNewArticle');
         Route::get('get/{articleID}', 'ArticleController@getArticle');
+        Route::post('edit', 'ArticleController@editArticle');
+        Route::post('thumbnail', 'ArticleController@uploadFeaturedThumbnail');
+        Route::post('background', 'ArticleController@uploadFeaturedBackground');
+        Route::post('getbackground', function(Request $request) {
+               $backgroundImage = $request->input('featured_background_image');
+               $path = storage_path('app/article/background/' . $backgroundImage);
+               if (!File::exists($path)) { abort(404); }
+               $file = File::get($path);
+               $type = File::mimeType($path);
+               $response = Response::make($file, 200);
+               $response->header("Content-Type", $type);
+               return $response;
+        });
     });
 
     Route::group(['prefix' => 'special_offers'], function() {
@@ -198,6 +212,12 @@ Route::group(['prefix' => '/admin'], function() {
         Route::post('update', 'SpecialOffersController@updateOffer');
     });
 
+});
+
+Route::group(['prefix' => 'articles'], function() {
+    Route::get('latest', 'ArticleController@latest');
+    Route::get('collection', 'ArticleController@getCollection');
+    Route::get('getFeaturedArticle/{articleSlug}','ArticleController@featuredArticle');
 });
 
 Route::get('/getusers', 'AccountsController@getUsers');
