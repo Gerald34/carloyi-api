@@ -8,6 +8,7 @@ use App\Http\Resources\ArticleResource;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
