@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,8 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //Token
-Route::get('/token', function()
-{
+Route::get('/token', function() {
     return csrf_token();
 });
 
@@ -38,11 +39,17 @@ Route::get('/firebase', 'FireBaseController@getFireBaseData');
 Route::post('/notification', 'ShowroomController@sendNotification');
 Route::post('/newPasswordToken', 'UserLoginController@newPasswordToken');
 Route::get('specials', 'CarSpecialsController@getSpecialOffers');
-Route::group(['prefix' => '/accounts' ], function()
-{
+
+/**
+ * User registration
+ */
+Route::group(['prefix' => '/accounts' ], function() {
     Route::post('/register', 'AccountsController@register');
 });
 
+/**
+ * Articles
+ */
 Route::group(['prefix' => '/blog'], function () {
     Route::get('/get', 'NewsController@getNews');
     Route::get('latest', 'NewsController@featured');
@@ -50,9 +57,10 @@ Route::group(['prefix' => '/blog'], function () {
     Route::get('post/{articleID}', 'NewsController@blogPost');
 });
 
-
-Route::group(['prefix' => '/showroom' ], function()
-{
+/**
+ * User showroom routes
+ */
+Route::group(['prefix' => '/showroom' ], function() {
     Route::get('/cars/{id}', 'ShowroomController@getUserShowroom');
     Route::get('/offers/{id}', 'ShowroomController@showroomOffers');
     Route::post('/add', 'ShowroomController@addNew');
@@ -69,10 +77,15 @@ Route::group(['prefix' => '/showroom' ], function()
     Route::post('/pushMessage', 'ShowroomController@pushMessage');
 });
 
+/**
+ * All cars
+ */
 Route::get('/allCars', 'CarSearchController@getAllCars');
 
-Route::group(['prefix' => '/portal' ], function()
-{
+/**
+ * Dealer Portal Routes
+ */
+Route::group(['prefix' => '/portal' ], function() {
     Route::get('/{id}', 'DealerPortalController@getDealerShowroom');
     Route::post('/reply', 'DealerPortalController@reply');
     Route::post('/placeoffer', 'DealerPortalController@placeOffer');
@@ -87,19 +100,30 @@ Route::group(['prefix' => '/portal' ], function()
     Route::get('/chats/{id}', 'DealerPortalController@fetchChats');
 });
 
+/**
+ * Get brands
+ */
 Route::get('/brands', function(){
     return App\Brand::getBrandOptions();
 });
 
+/**
+ * Test
+ */
 Route::get('/ttest', function(){
     return App\User::getActiveDealers();
 });
 
-
+/**
+ * Get brand id's
+ */
 Route::get('/brands/{id}', function($id) {
     return App\Brand::getBrand($id);
 });
 
+/**
+ * Car search routes
+ */
 Route::group(['prefix' => '/carsearch' ], function()
 {
     Route::get('/specific/{id}', 'CarSearchController@specific');
@@ -111,20 +135,30 @@ Route::group(['prefix' => '/carsearch' ], function()
     Route::post('/randomcars', 'CarSearchController@randomCars');
     Route::post('/randomcarsfour', 'CarSearchController@randomCarsFour');
 });
+
 //Async Validation Requests
 Route::post('/checkuser', 'UserRegistrationController@checkUserEmail');
 
+/**
+ * Get dealer name { For chat }
+ */
 Route::get('/dealerName/{id}', function($dealerID) {
-    $dealer = DB::table('vfq0g_dealers')->where('id', $dealerID)->first();
+    $dealer = DB::table('vfq0g_dealers')->select('id', 'name', 'email', 'location')->where('id', $dealerID)->first();
     return [ 'dealer' => $dealer ];
 });
 
+/**
+ * Push notifications
+ */
 Route::group(['prefix' => 'push_notifications'], function() {
     Route::post('/subscribe', 'PushNotificationController@subscribePushNotification');
     Route::post('/offer_push_message', 'PushNotificationController@offerPushMessage');
     Route::post('/request_push_message', 'PushNotificationController@requestPushMessage');
 });
 
+/**
+ * Administrator portal routes
+ */
 Route::group(['prefix' => '/admin'], function() {
    Route::post('/signin', 'AuthorizedController@adminLogin');
    Route::get('/export', 'AuthorizedController@export');
@@ -217,9 +251,13 @@ Route::group(['prefix' => '/admin'], function() {
 
 Route::group(['prefix' => 'articles'], function() {
     Route::get('latest', 'ArticleController@latest');
-    Route::get('collection', 'ArticleController@getCollection');
+    Route::get('collection/{current}', 'ArticleController@getCollection');
     Route::get('getFeaturedArticle/{articleSlug}','ArticleController@featuredArticle');
 });
 
 Route::get('/getusers', 'AccountsController@getUsers');
 Route::get('/getdealers', 'AccountsController@getDealer');
+
+Route::get('hash', function($length = 10) {
+    return Hash::make('PRQYtLtP2p');
+});

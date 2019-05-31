@@ -40,20 +40,6 @@ class ArticleController extends Controller
 
     public function editArticle(Request $request) {
 
-        // $validatedData = Validator::make($request->all(), [
-        //     'id' => 'required',
-        //     'featured_title' => 'required',
-        //     'article_slug' => 'required',
-        //     'featured_caption' => 'required',
-        //     'featured_thumbnail' => 'required',
-        //     'featured_background_image' => 'required',
-        //     'featured_story' => 'required',
-        //     'author' => 'required',
-        //     'external_link' => 'required',
-        // ]);
-
-        // return response()->json($validatedData);
-
         $data = [
         'id' => $request->input('itemID'),
         'featured_title' => $request->input('featured_title'),
@@ -120,8 +106,19 @@ class ArticleController extends Controller
         return Articles::orderBy('id', 'desc')->first();
     }
 
-    public function getCollection() {
-        return Articles::select('id', 'featured_title', 'article_slug', 'featured_thumbnail')->take(3)->get();
+    public function getCollection($current) {
+        $collection =  Articles::select('id')->get();
+        $ids = [];
+        foreach ($collection as $article) {
+            $ids[] =  $article->id;
+        }
+        if (($key = array_search($current, $ids)) !== false) {
+            unset($ids[$key]);
+        }
+        $remains = array_values($ids);
+
+        return Articles::select('id', 'featured_title', 'article_slug', 'featured_thumbnail')->whereIn('id', $remains)->get();
+
     }
 
     public function featuredArticle($articleSlug) {
