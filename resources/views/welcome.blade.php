@@ -13,8 +13,8 @@
         <!-- Styles -->
         <style>
             html, body {
-                background-color: #fff;
-                color: #636b6f;
+                background-color: #006885;
+                color: #eef6fa;
                 font-family: 'Raleway', sans-serif;
                 font-weight: 100;
                 height: 100vh;
@@ -46,11 +46,11 @@
             }
 
             .title {
-                font-size: 84px;
+                font-size: 54px;
             }
 
             .links > a {
-                color: #636b6f;
+                color: #eef6fa;
                 padding: 0 25px;
                 font-size: 12px;
                 font-weight: 600;
@@ -61,6 +61,11 @@
 
             .m-b-md {
                 margin-bottom: 30px;
+            }
+
+            .brand {
+                margin: 5px auto;
+                display: block;
             }
         </style>
     </head>
@@ -78,8 +83,11 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
+
+                <div class="brand">
+                    <a href="/settings" style="width: 180px; display: inline-flex;">
+                        @svg('public/images/carloyi@3x', 'icon-lg', ['id' => 'brand-logo'])
+                    </a>
                 </div>
 
                 <div class="links">
@@ -91,5 +99,7 @@
                 </div>
             </div>
         </div>
+
+        {{ svg_spritesheet() }}
     </body>
 </html>

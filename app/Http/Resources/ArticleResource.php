@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\Resource;
 use App\ArticleModel as Articles;
-
+use App\Http\Controllers\MetaTagsController;
 class ArticleResource extends Resource {
     private static $response;
     /**
@@ -24,6 +25,19 @@ class ArticleResource extends Resource {
         $newBlog->updated_at = $post['updated_at'];
         $newBlog->created_at = $post['created_at'];
         $newBlog->save();
+
+        $metaTags = new MetaTagsController;
+        $metaTags->saveMetaTags($data = [
+            'url' => $post['article_slug'],
+            'type' => 'website',
+            'title' => $post['featured_title'],
+            'description' => $post['featured_caption'],
+            'image' => $post['featured_background_image'],
+            'image_alt' => $post['image_alt'],
+            'image_type' => 'image/jpg',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
 
         return self::$response = [
             'successCode' => 200,

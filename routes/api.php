@@ -255,6 +255,8 @@ Route::group(['prefix' => 'articles'], function() {
     Route::get('getFeaturedArticle/{articleSlug}','ArticleController@featuredArticle');
 });
 
+Route::get('/metadata/{slug}', 'MetaTagsController@getMetaTags');
+
 Route::get('/getusers', 'AccountsController@getUsers');
 Route::get('/getdealers', 'AccountsController@getDealer');
 

@@ -125,9 +125,7 @@ self::sendSubscriptionPushMessage($subscriptionData);
 //            'base_uri' => '154.66.197.198',
             'verify' => base_path('cacert.pem'),
         ]);
-        $client->post(
-            'https://node.carloyi.com:8080/sendOfferNotification',
-            [ RequestOptions::JSON => [ 'userID' => $userID ] ]);
+        $client->post('https://node.carloyi.com:8080/sendOfferNotification', [ RequestOptions::JSON => [ 'userID' => $userID ] ]);
     }
     
     /**

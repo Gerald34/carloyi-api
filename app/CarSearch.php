@@ -226,6 +226,16 @@ class CarSearch extends Model
     /**
      * @param $ids
      * @param array $options
+     * @return array
+     */
+    public static function getSearchCarsByIds_dealer($ids, $options = array())
+    {
+        return self::_getSearchCarsByIds_dealer($ids);
+    }
+
+    /**
+     * @param $ids
+     * @param array $options
      * @return mixed
      */
     public static function getSearchCarsByIds_2($ids, $options = array())
@@ -409,6 +419,37 @@ class CarSearch extends Model
 
         return self::$response;
     }
+
+    private static function _getSearchCarsByIds_dealer($ids)
+    {
+        self::$response = [];
+
+        $results = DB::table('vfq0g_allcars')
+            ->whereIn('id', $ids)
+            ->orderBy('points', 'desc')
+            ->orderBy('total_score', 'desc')
+            ->get();
+
+        $filtered = self::filterByApproval($results);
+
+        $allTypes = [];
+
+        foreach ($filtered as $type) {
+            $allTypes[] = $type->car_type;
+        }
+
+        $thisType = DB::table('vfq0g_car_types')->whereIn('id', $allTypes)->get();
+
+        self::$response = [
+            'successCode' => 1,
+            'data' => $filtered,
+            'type' => $thisType
+        ];
+
+        return self::$response;
+    }
+
+
 
     public static function filterByApproval($results)
     {

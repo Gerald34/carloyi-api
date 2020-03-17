@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+
 class DealerShowroomPosts extends Model
 {
     //
@@ -12,11 +13,9 @@ class DealerShowroomPosts extends Model
     protected $fillable = ['parent_id','request_id','user_id', 'name','car_id','dealer_id','offer','comment', 'status', 'car_image', 'extras'];
     public static $response;
 
-    public function getDealerShowroomEntries($id)
-    {
+    public function getDealerShowroomEntries($id) {
 
        $posts = self::where(['dealer_id' => $id])->orderBy('created_at', 'DESC')->get();
-       
             if(count($posts) == 0) {
                 $response = [
                     'code' => -1,
@@ -24,18 +23,15 @@ class DealerShowroomPosts extends Model
                 ];
             }
             //
-            
             $entries  = [];
-
             foreach ($posts as $post) {
                 $entries[] = [
                     'entry' => $post,
                     'users' => BaseUser::getUderById($post->user_id),
-                    'car' => CarSearch::getSearchCarsByIds([$post->car_id]),
+                    'car' => CarSearch::getSearchCarsByIds_dealer([$post->car_id]),
                     'posts' =>  DealerUserPost::getPostsByRequestID($post->id)
                 ];
             }
-
             $response = [
                 'code' => 1,
                 'data' => $entries
@@ -45,8 +41,7 @@ class DealerShowroomPosts extends Model
 
     }
 
-    public function getFullShowroomPost($id)
-    {
+    public function getFullShowroomPost($id) {
             $post = self::find($id);
             if($post == null)
             {

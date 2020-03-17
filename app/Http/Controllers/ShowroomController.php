@@ -30,6 +30,10 @@ class ShowroomController extends Controller
     // Properties
     public $response;
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function subscribePushNotification(Request $request) {
         $subscriptionData = [
             'subscription' => $request->input('subscription'),
@@ -39,12 +43,19 @@ class ShowroomController extends Controller
         return PushNotificationResource::saveSubscription($subscriptionData);
     }
 
+    /**
+     * @param Request $request
+     */
     public function pushMessage(Request $request) {
         $userID = $request->input('userID');
 
         return PushNotificationResource::sendPushMessage($userID);
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function removeCar(Request $request)
     {
         $itemID = $request->input('itemID');
@@ -67,6 +78,10 @@ class ShowroomController extends Controller
         return $this->response;
     }
 
+    /**
+     * @param $itemID
+     * @return array
+     */
     public function offerInformation($itemID)
     {
         $this->response = UserShowroom::getItemInfo($itemID);
@@ -74,6 +89,10 @@ class ShowroomController extends Controller
         return $this->response;
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function booking(Request $request)
     {
         $booking = [
@@ -116,7 +135,7 @@ class ShowroomController extends Controller
         return UserShowroom::getOffersByUser($id);
     }
 
-/**
+    /**
      * @param Request $request
      * @return array|string
      *
@@ -140,7 +159,6 @@ class ShowroomController extends Controller
             ->first();
 
         if (isset($checkRequest)) {
-
             if ($checkRequest->requested == 1) {
                 $this->response = [
                     'code' => -1,
@@ -252,8 +270,6 @@ class ShowroomController extends Controller
         return $this->response;
     }
 
-
-
     /**
      * @param Request $request
      * @return array
@@ -338,29 +354,31 @@ class ShowroomController extends Controller
      */
     public function addNew(Request $request)
     {
-        $model = new UserShowroom;
-        $requestInfo = [
-            'cid' => $request->input('cid'),
-            'uid' => $request->input('uid')
-        ];
 
-        $model->cid = $request->input('cid');
-        $model->uid = $request->input('uid');
+        $uid = $request->input('uid');
+        $cid = $request->input('cid');
 
-        $data = $model->reqExists();
-        if ($data['exists'] === true) {
+        $data = UserShowroom::reqExists($uid, $cid);
+
+        if ($data['message'] == true) {
             return [
                 'code' => 1,
-                'error' => 'Already Added',
-                'data' => $data['entry']
+                'error' => 'Already Added'
             ];
         }
-        $model->fill($request->all());
-        $res = $model->save();
+
+        $res = UserShowroom::create([
+            'uid' => $uid,
+            'cid' => $cid,
+            'test_drive_date' => null,
+            'requested' => 0,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+
         return [
             'code' => ($res) ? 1 : -1,
-            'error' => '',
-            'data' => $model
+            'error' => ''
         ];
     }
 
@@ -540,7 +558,6 @@ class ShowroomController extends Controller
         }
         return $randomString;
     }
-
 
     /**
      * @param $id

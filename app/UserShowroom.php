@@ -192,28 +192,13 @@ class UserShowroom extends Model
         return $data;
     }
 
-    public function reqExists() {
-
-        $entry = self::where(['uid' => $this->uid, 'cid' => $this->cid] )->first();
-
-        if($entry === null ) {
-
-            $response = [
-                'exists'  => false,
-                'entry' => $entry
-            ];
-
-        } else {
-
-            $response = [
-                'exists'  => true,
-                'entry' => $entry
-            ];
-
-        }
-
-
-        return $response;
+    /**
+     * @param int $uid
+     * @param int $cid
+     * @return array
+     */
+    public static function reqExists(int $uid, int $cid) {
+        return (self::where(['uid' => $uid, 'cid' => $cid] )->first()) ? [ 'message' => true ] : ['message' => false];
     }
 
     /**
